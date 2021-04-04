@@ -6,7 +6,7 @@ Valheim Plus discord bot based off of [ckbaudio's valheim-discord-bot](https://g
 `table_info.sql` Has Table info for the database  
 `pip install -r requirements.txt` To install Pyhton requirements.
 
-## [config.py](https://github.com/stolenvw/ValheimPlus-Discord_Bot/blob/main/code/config.py)
+## [config.py](code/config.py)
 Edit this file with your info. Setting should be self-explanitory.  
 
 Add `-logfile /location/to/file.log` to your start command to get a logfile.  
