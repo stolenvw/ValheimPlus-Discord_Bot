@@ -23,16 +23,16 @@ import pandas as pd
 #Color init
 colorama.init()
 
-pdeath = '^\[Info\s+:\s+Unity Log\].*? Got character ZDOID from (\w+) : 0:0$'
-pevent = '^\[Info\s+:\s+Unity Log\].*? Random event set:(\w+)$'
-pjoin = '^\[Info\s+:\s+Unity Log\].*? Got character ZDOID from (\w+) : ([-0-9]*:[-0-9]*)$'
-pquit = '^\[Info\s+:\s+Unity Log\].*? Destroying abandoned non persistent zdo ([-0-9]*:[0-9]*) owner [-0-9]*$'
-pfind = '^\[Info\s+:\s+Unity Log\].*? Found location of type (\w+)$'
+pdeath = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Got character ZDOID from (\w+) : 0:0'
+pevent = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Random event set:(\w+)'
+pjoin = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Got character ZDOID from (\w+) : ([-0-9]*:[-0-9]*)$'
+pquit = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Destroying abandoned non persistent zdo ([-0-9]*:[0-9]*) owner [-0-9]*$'
+pfind = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Found location of type (\w+)'
 # Extra Server Info
-ssaved1 = '.*? Saved ([0-9]+) zdos$'
-ssaved2 = '.*? World saved \( ([0-9]+\.[0-9]+)ms \)$'
-sversion = '^\[Info\s+:\s+Unity Log\].*? Valheim version:([\.0-9]+)@([\.0-9]+)$'
-gdays = '^\[Info\s+:\s+Unity Log\].*? Time [\.0-9]+, day:([0-9]+)\s{1,}nextm:[\.0-9]+\s+skipspeed:[\.0-9]+$'
+ssaved1 = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Saved ([0-9]+) zdos$'
+ssaved2 = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: World saved \( ([0-9]+\.[0-9]+)ms \)$'
+sversion = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Valheim version:([\.0-9]+)@([\.0-9]+)$'
+gdays = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Time [\.0-9]+, day:([0-9]+)\s{1,}nextm:[\.0-9]+\s+skipspeed:[\.0-9]+$'
 
 
 bot = commands.Bot(command_prefix=config.BOT_PREFIX, help_command=None)

@@ -11,7 +11,7 @@ Edit this file with your info. Setting should be self-explanitory.
 
 Add `-logfile /location/to/file.log` to your start command to get a logfile.  
 
-**Warning:** If using the `BepInEx/LogOutput.log` file you need to edit the **BepInEx.cfg** file `AppendLog = true` *If you do not set this and server is started before bot, or restarted without restarting bot it will not work.* When using the `LogOutPut.log` Extra Server Info World Zdos save info **will not be available**  
+**Warning:** Using the `BepInEx/LogOutput.log` file will not work  
 
 For `WORLDSIZE` user running the bot must have read permissions to the world.db.old file
 
