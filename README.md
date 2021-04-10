@@ -22,5 +22,11 @@ Or you can create a service to run `plusbot.py` under systemd
 
 **help** Shows available commands
 
+## [Optional:](optional)
+Check the optional dir for addons
+
 ### Example Output:
 ![](example/example.png)
+
+## Changes:
+- March 4, 2021: Major rewrite

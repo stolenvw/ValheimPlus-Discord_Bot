@@ -3,7 +3,11 @@
 # IMPORTANT! You must have a log for event reports and death leaderboards
 # logs are achieved by using -logfile flag on launch, or by logging stdout
 # Windows Users use forward slashes
+# Path to your log file
 file = '/var/log/valheim.log'
+
+# Path to Valheim Plus config file (Only needed if using optional pluscmds)
+vplusfile = '/home/user/valheim/BepInEx/config/valheim_plus.cfg'
 
 BOT_TOKEN = ""
 
