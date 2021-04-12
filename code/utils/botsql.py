@@ -41,11 +41,19 @@ class BotSQL(commands.Cog):
     async def get_cursor(self):
         try:
             mydb.ping(reconnect=True, attempts=3, delay=5)
+        except NameError as er:
+               print(Fore.RED, er, "Reconnecting MySQL database" + Style.RESET_ALL)
+               if config.USEDEBUGCHAN == True:
+                  bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                  bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description= "{} Reconnection MySQL database".format(er), color=0xFF001E)
+                  bugerror.set_author(name=config.SERVER_NAME)
+                  await bugchan.send(embed=bugerror)
+               await self.mydbconnect()
         except mysql.connector.Error as err:
-            await mydbconnect()
+            await self.mydbconnect()
             print(Fore.RED + "Connection to MySQL database went away... Reconnecting " + Style.RESET_ALL)
             if config.USEDEBUGCHAN == True:
-                bugchan = bot.get_channel(dbchanID)
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
                 bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description="Connection to MySQL database went away... Reconnecting", color=0xFF001E)
                 bugerror.set_author(name=config.SERVER_NAME)
                 await bugchan.send(embed=bugerror)
@@ -53,6 +61,27 @@ class BotSQL(commands.Cog):
 
     async def botmydb(self):
         mydb.commit()
+
+    async def get_mydb(self):
+        try:
+            mydb.ping(reconnect=True, attempts=3, delay=5)
+        except NameError as er:
+               print(Fore.RED, er, "Reconnecting MySQL database" + Style.RESET_ALL)
+               if config.USEDEBUGCHAN == True:
+                  bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                  bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description= "{} Reconnection MySQL database".format(er), color=0xFF001E)
+                  bugerror.set_author(name=config.SERVER_NAME)
+                  await bugchan.send(embed=bugerror)
+               await self.mydbconnect()
+        except mysql.connector.Error as err:
+            await self.mydbconnect()
+            print(Fore.RED + "Connection to MySQL database went away... Reconnecting " + Style.RESET_ALL)
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description="Connection to MySQL database went away... Reconnecting", color=0xFF001E)
+                bugerror.set_author(name=config.SERVER_NAME)
+                await bugchan.send(embed=bugerror)
+        return mydb
 
 def setup(bot):
     bot.add_cog(BotSQL(bot))

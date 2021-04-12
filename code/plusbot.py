@@ -133,6 +133,7 @@ async def on_ready():
     bot.loop.create_task(serveronline())
     botsql = bot.get_cog('BotSQL')
     await botsql.mydbconnect()
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Stolenvw ValPlusBot"))
 
 # Main loop for reading log file and outputing events
 async def mainloop(file):

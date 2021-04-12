@@ -14,13 +14,6 @@ class Main(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.mydb = mysql.connector.connect(
-            host=config.SQL_HOST,
-            user=config.SQL_USER,
-            password=config.SQL_PASS,
-            database=config.SQL_DATABASE,
-            port=config.SQL_PORT,
-            )
 
     @commands.command(name="deaths",
                       brief="Deaths leaderboard",
@@ -83,10 +76,8 @@ class Main(commands.Cog):
 
         #Get data from mysql
         botsql = self.bot.get_cog('BotSQL')
-        mycursor = await botsql.get_cursor()
-        mycursor.close()
         sqls = """SELECT date, users FROM serverstats WHERE timestamp BETWEEN '%s' AND '%s'""" % (tlookup, int(time.time()))
-        df = pd.read_sql(sqls, self.mydb, parse_dates=['date'])
+        df = pd.read_sql(sqls, await botsql.get_mydb(), parse_dates=['date'])
         lastday = datetime.now() - timedelta(hours = user_range)
 
         # Plot formatting / styling matplotlib
