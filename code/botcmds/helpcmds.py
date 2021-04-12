@@ -48,7 +48,7 @@ class Help(commands.Cog):
 
 	    # !SET THOSE VARIABLES TO MAKE THE COG FUNCTIONAL!
         prefix = config.BOT_PREFIX
-        version =  "v1.0.0"
+        version =  "v0.2.0"
 
         # checks if cog parameter was given
         # if not: sending all modules and commands not associated with a cog
@@ -61,7 +61,13 @@ class Help(commands.Cog):
             # iterating trough cogs, gathering descriptions
             cogs_desc = ''
             for cog in self.bot.cogs:
-                if cog != "BotSQL" and cog != "Admin":
+                valid = False
+                for command in self.bot.get_cog(cog).get_commands():
+                    if not command.hidden:
+                        valid = await command.can_run(ctx)
+                    if valid:
+                        break
+                if valid:
                     cogs_desc += f'`{cog}` {self.bot.cogs[cog].__doc__}\n'
 
             # adding 'list' of cogs to embed
@@ -98,10 +104,12 @@ class Help(commands.Cog):
                     for command in self.bot.get_cog(cog).get_commands():
                         # if cog is not hidden
                         if not command.hidden:
-                            if not command.usage:
-                                emb.add_field(name=f"`{prefix}{command.name}`", value=command.help, inline=False)
-                            else:
-                                emb.add_field(name=f"`{prefix}{command.name} {command.usage}`", value=command.help, inline=False)
+                            valid = await command.can_run(ctx)
+                            if valid:
+                                if not command.usage:
+                                    emb.add_field(name=f"`{prefix}{command.name}`", value=command.help, inline=False)
+                                else:
+                                    emb.add_field(name=f"`{prefix}{command.name} {command.usage}`", value=command.help, inline=False)
                     # found cog - breaking loop
                     break
 
