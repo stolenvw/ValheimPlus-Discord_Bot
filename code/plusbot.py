@@ -380,7 +380,7 @@ async def serveronline():
                 await channel.edit(name=f"{emoji.emojize(':cross_mark:')} Server Offline")
             if sonline == 1:
                 sonline = 0
-                botsql = self.bot.get_cog('BotSQL')
+                botsql = bot.get_cog('BotSQL')
                 mycursor = await botsql.get_cursor()
                 sql2 = """INSERT INTO serverstats (date, timestamp, users) VALUES ('%s', '%s', '%s')""" % (await timenow(), int(time.time()), sonline)
                 mycursor.execute(sql2)
