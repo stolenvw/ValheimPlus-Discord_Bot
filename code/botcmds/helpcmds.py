@@ -52,6 +52,11 @@ class Help(commands.Cog):
 
         # checks if cog parameter was given
         # if not: sending all modules and commands not associated with a cog
+        async def predicate(cmd):
+            try:
+                return await cmd.can_run(ctx)
+            except commands.CommandError:
+                return False
         if not input:
             # starting to build embed
             emb = discord.Embed(title='Valheim Plus Discord Bot', url="https://github.com/stolenvw/ValheimPlus-Discord_Bot", color=discord.Color.blue(),
@@ -64,7 +69,7 @@ class Help(commands.Cog):
                 valid = False
                 for command in self.bot.get_cog(cog).get_commands():
                     if not command.hidden:
-                        valid = await command.can_run(ctx)
+                        valid = await predicate(command)
                     if valid:
                         break
                 if valid:
@@ -104,7 +109,7 @@ class Help(commands.Cog):
                     for command in self.bot.get_cog(cog).get_commands():
                         # if cog is not hidden
                         if not command.hidden:
-                            valid = await command.can_run(ctx)
+                            valid = await predicate(command)
                             if valid:
                                 if not command.usage:
                                     emb.add_field(name=f"`{prefix}{command.name}`", value=command.help, inline=False)
