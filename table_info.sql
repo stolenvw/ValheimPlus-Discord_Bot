@@ -49,6 +49,13 @@ CREATE TABLE `exstats` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+--
+-- Data for table `events`
+--
+
+INSERT INTO `exstats` VALUES (1,'NULL','NULL','NULL','NULL','NULL','NULL',1616448381);
+
 --
 -- Table structure for table `players`
 --
