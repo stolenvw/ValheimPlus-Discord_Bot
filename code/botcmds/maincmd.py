@@ -15,11 +15,17 @@ class Main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def chancheck(ctx):
+        if ctx.channel.id == config.LOGCHAN_ID or commands.is_owner():
+            return True
+
     @commands.command(name="deaths",
                       brief="Deaths leaderboard",
                       help="Shows a top 5 leaderboard of players with the most deaths. \n Available: 1-10 (default: 5)",
                       usage="<n>",
                       )
+    @commands.has_any_role(config.DEATHS_CMD)
+    @commands.check(chancheck)
     async def leaderboards(self, ctx, arg: typing.Optional[str] = '5'):
         ldrembed = discord.Embed(title=":skull_crossbones: __Death Leaderboards (top " + arg + ")__ :skull_crossbones:", color=0xFFC02C)
         botsql = self.bot.get_cog('BotSQL')
@@ -45,11 +51,26 @@ class Main(commands.Cog):
         mycursor.close()
         await ctx.send(embed=ldrembed)
 
+    @leaderboards.error
+    async def deaths_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+        if isinstance(error, commands.CheckFailure):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+
     @commands.command(name="stats",
                       brief="Graph of connected players",
                       help="Plots a graph of connected players over the last X hours.\n Available args: 24, 12, w (default: 24)",
                       usage="<arg>",
                       )
+    @commands.has_any_role(config.STATS_CMD)
+    @commands.check(chancheck)
     async def gen_plot(self, ctx, tmf: typing.Optional[str] = '24'):
         user_range = 0
         if tmf.lower() in ['w', 'week', 'weeks']:
@@ -111,11 +132,26 @@ class Main(commands.Cog):
         embed.set_image(url='attachment://temp.png')
         await ctx.send(file=image, embed=embed)
 
+    @gen_plot.error
+    async def stats_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+        if isinstance(error, commands.CheckFailure):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+
     @commands.command(name="playerstats",
                       brief="Player stats",
                       help="Shows player stats on active monitored world.\n Arg= <Players Name>",
                       usage="<arg>",
                       )
+    @commands.has_any_role(config.PLAYERSTATS_CMD)
+    @commands.check(chancheck)
     async def playstats(self, ctx, arg):
         botsql = self.bot.get_cog('BotSQL')
         mycursor = await botsql.get_cursor()
@@ -140,10 +176,25 @@ class Main(commands.Cog):
             await ctx.send(content=':no_entry_sign: **' + arg + '** Not Found')
         mycursor.close()
 
+    @playstats.error
+    async def playerstats_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+        if isinstance(error, commands.CheckFailure):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+
     @commands.command(name="active",
                       brief="Active players",
                       help="Shows who is currently logged into the server and how long they have been on for.",
                       )
+    @commands.has_any_role(config.ACTIVE_CMD)
+    @commands.check(chancheck)
     async def actives(self, ctx):
         botsql = self.bot.get_cog('BotSQL')
         mycursor = await botsql.get_cursor()
@@ -166,10 +217,25 @@ class Main(commands.Cog):
              await ctx.send(embed=ldrembed)
         mycursor.close()
 
+    @actives.error
+    async def active_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+        if isinstance(error, commands.CheckFailure):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+
     @commands.command(name="version",
                       brief="Server Versions",
                       help="Shows current version of Valheim and Valheim Plus server is running.",
                       )
+    @commands.has_any_role(config.VERSIONS_CMD)
+    @commands.check(chancheck)
     async def versions(self, ctx):
         botsql = self.bot.get_cog('BotSQL')
         mycursor = await botsql.get_cursor()
@@ -191,13 +257,25 @@ class Main(commands.Cog):
             await ctx.send(content=':no_entry_sign: Sorry no game version info found in the DB')
         mycursor.close()
 
+    @versions.error
+    async def version_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+        if isinstance(error, commands.CheckFailure):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+
     @commands.command(name="setstatus",
-                      brief="Server Versions",
+                      brief="Set bot status",
                       help="Set status message of the bot. \n Available arg: playing, watching, listening",
                       usage='<arg> <"arg1">',
-                      hidden=True,
                       )
-    @commands.is_owner()
+    @commands.has_any_role(config.SETSTATUS_CMD)
     async def setstatus(self, ctx, arg: typing.Optional[str] = '0', arg1: typing.Optional[str] = '1'):
           if arg == "playing":
              await self.bot.change_presence(activity=discord.Game(arg1))
@@ -210,12 +288,19 @@ class Main(commands.Cog):
           else:
                await ctx.channel.send('Usage: `{}setstatus <playing|watching|listening> "<Some activity>"`'.format(self.bot.command_prefix))
 
+    @setstatus.error
+    async def setstatus_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+
     @commands.command(name="savestats",
                       brief="Save stats",
                       help="Shows how many zods where saved and time it took to save them.",
-                      hidden=True,
                       )
-    @commands.is_owner()
+    @commands.has_any_role(config.SAVESTATS_CMD)
     async def savestats(self, ctx):
         if config.EXSERVERINFO == True:
             botsql = self.bot.get_cog('BotSQL')
@@ -244,6 +329,14 @@ class Main(commands.Cog):
             mycursor.close()
         else:
             await ctx.send(content=':no_entry_sign: Extra Server Info is turned off, turn on to see save stats')
+
+    @savestats.error
+    async def savestats_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
 
 def setup(bot):
     bot.add_cog(Main(bot))

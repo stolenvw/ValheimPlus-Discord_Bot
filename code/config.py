@@ -48,3 +48,13 @@ USEDEBUGCHAN = True
 
 # BUGCHANNEL - where the bot shows debug info
 BUGCHANNEL_ID = 7293481670000121
+
+# Commands Roles. Discord roles that can use command.
+DEATHS_CMD = "@everyone"
+STATS_CMD = "@everyone"
+PLAYERSTATS_CMD = "@everyone"
+ACTIVE_CMD = "@everyone"
+VERSIONS_CMD = "@everyone"
+VPLUS_CMD = "@everyone"
+SETSTATUS_CMD = "Admin"
+SAVESTATS_CMD = "Admin","Mod"

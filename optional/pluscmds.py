@@ -1,4 +1,4 @@
-import discord, typing
+import discord, typing, config
 from discord.ext import commands
 
 class Plus(commands.Cog):
@@ -9,11 +9,17 @@ class Plus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def chancheck(ctx):
+        if ctx.channel.id == config.LOGCHAN_ID or commands.is_owner():
+            return True
+
     @commands.command(name='vplus',
                       brief="Plus settings",
                       help="Shows Plus mod settings. \n Available arg: enabled, disabled, section name \n Enabled: Shows enabled sections. \n Disabled: Shows disabled sections. \n Section Name: Shows settings for that section.",
                       usage="<arg>",
                       )
+    @commands.has_any_role(config.VPLUS_CMD)
+    @commands.check(chancheck)
     async def vplus(self, ctx, arg: typing.Optional[str] = 'help'):
         ldrembed = discord.Embed(title="Valheim Plus Settings " + arg + "", color=0x33a163)
         botsql = self.bot.get_cog('BotSQL')
@@ -65,6 +71,19 @@ class Plus(commands.Cog):
                                    inline=False)
         mycursor.close()
         await ctx.send(embed=ldrembed)
+
+    @vplus.error
+    async def vplus_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+        if isinstance(error, commands.CheckFailure):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
 
 def setup(bot):
     bot.add_cog(Plus(bot))

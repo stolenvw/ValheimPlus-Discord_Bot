@@ -41,14 +41,19 @@ class Help(commands.Cog):
         self.bot = bot
         self.bot.remove_command("help")
 
+    async def chancheck(ctx):
+        if ctx.channel.id == config.LOGCHAN_ID or commands.is_owner():
+            return True
+
     @commands.command()
+    @commands.check(chancheck)
     # @commands.bot_has_permissions(add_reactions=True,embed_links=True)
     async def help(self, ctx, *input):
         """Shows all modules of that bot"""
 
 	    # !SET THOSE VARIABLES TO MAKE THE COG FUNCTIONAL!
         prefix = config.BOT_PREFIX
-        version =  "v0.2.0"
+        version =  "v0.2.1"
 
         # checks if cog parameter was given
         # if not: sending all modules and commands not associated with a cog
@@ -141,6 +146,19 @@ class Help(commands.Cog):
 
         # sending reply embed using our own function defined above
         await send_embed(ctx, emb)
+
+    @help.error
+    async def help_error_handler(self, ctx, error):
+        if isinstance(error, commands.MissingAnyRole):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
+        if isinstance(error, commands.CheckFailure):
+            if config.USEDEBUGCHAN == True:
+                bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                await bugchan.send(embed=bugerror)
 
 
 def setup(bot):
