@@ -54,7 +54,7 @@ CREATE TABLE `exstats` (
 -- Data for table `events`
 --
 
-INSERT INTO `exstats` VALUES (1,'NULL','NULL','NULL','NULL','NULL','NULL',1616448381);
+INSERT INTO `exstats` VALUES (1,'NULL','NULL','NULL','NULL',NULL,NULL,1616448381);
 
 --
 -- Table structure for table `players`
