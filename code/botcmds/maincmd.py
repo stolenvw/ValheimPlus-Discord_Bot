@@ -276,6 +276,7 @@ class Main(commands.Cog):
                       usage='<arg> <"arg1">',
                       )
     @commands.has_any_role(config.SETSTATUS_CMD)
+    @commands.check(chancheck)
     async def setstatus(self, ctx, arg: typing.Optional[str] = '0', arg1: typing.Optional[str] = '1'):
           if arg == "playing":
              await self.bot.change_presence(activity=discord.Game(arg1))
@@ -295,12 +296,18 @@ class Main(commands.Cog):
                 bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
                 bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
                 await bugchan.send(embed=bugerror)
+            if isinstance(error, commands.CheckFailure):
+                if config.USEDEBUGCHAN == True:
+                    bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                    bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                    await bugchan.send(embed=bugerror)
 
     @commands.command(name="savestats",
                       brief="Save stats",
                       help="Shows how many zods where saved and time it took to save them.",
                       )
     @commands.has_any_role(config.SAVESTATS_CMD)
+    @commands.check(chancheck)
     async def savestats(self, ctx):
         if config.EXSERVERINFO == True:
             botsql = self.bot.get_cog('BotSQL')
@@ -337,6 +344,11 @@ class Main(commands.Cog):
                 bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
                 bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\n{}'.format(ctx.author, ctx.command, error), color=0xFF001E)
                 await bugchan.send(embed=bugerror)
+            if isinstance(error, commands.CheckFailure):
+                if config.USEDEBUGCHAN == True:
+                    bugchan = self.bot.get_channel(config.BUGCHANNEL_ID)
+                    bugerror = discord.Embed(title=":sos: **ERROR** :sos:", description='**{}** Tried to use command: **{}**\nIn channel **#{}**'.format(ctx.author, ctx.command, ctx.channel), color=0xFF001E)
+                    await bugchan.send(embed=bugerror)
 
 def setup(bot):
     bot.add_cog(Main(bot))
