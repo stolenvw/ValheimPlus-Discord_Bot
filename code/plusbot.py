@@ -25,6 +25,8 @@ ssaved2 = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: World saved
 sversion = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Valheim version:([\.0-9]+)@([\.0-9]+)$'
 gdays = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Time [\.0-9]+, day:([0-9]+)\s{1,}nextm:[\.0-9]+\s+skipspeed:[\.0-9]+$'
 
+ploc = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Placed locations in zone ([-,0-9]+)  duration ([\.0-9]+) ms$'
+tloc = '^[0-9]{2}\/[0-9]{2}\/[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}: Loaded ([0-9]+) locations$'
 
 bot = commands.Bot(command_prefix=config.BOT_PREFIX)
 server_name = config.SERVER_NAME
@@ -170,6 +172,7 @@ async def mainloop(file):
                             await botsql.botmydb()
                             mycursor.close()
                             await lchannel.send(':skull: **' + pname + '** just died!')
+                    # Announcing of mob events
                         if(re.search(pevent, line)):
                             eventID = re.search(pevent, line).group(1)
                             botsql = bot.get_cog('BotSQL')
@@ -184,6 +187,7 @@ async def mainloop(file):
                             embed.set_author(name="📢 Random Mob Event")
                             await lchannel.send(file=image, embed=embed)
                             mycursor.close()
+                    # Announcing when a player joins the server, Announcing if they are a new player on the server, adds player to db if new, updates db with login time
                         if(re.search(pjoin, line)):
                             logJoin = re.search(pjoin, line).group(1)
                             logID = re.search(pjoin, line).group(2)
@@ -258,6 +262,7 @@ async def mainloop(file):
                             mycursor.close()
                         # Extra Server Info DB After this point
                         if config.EXSERVERINFO == True:
+                        # Getting and storing how many zdos where saved
                             if(re.search(ssaved1, line)):
                                 save1 = re.search(ssaved1, line).group(1)
                                 botsql = bot.get_cog('BotSQL')
@@ -335,6 +340,43 @@ async def mainloop(file):
                                 mycursor.execute(sql)
                                 await botsql.botmydb()
                                 await lchannel.send('**INFO:** Server reported in game day as: ' + gamedays + '')
+                                mycursor.close()
+                        if config.PLOCINFO == True:
+                            if(re.search(ploc, line)):
+                                zone = re.search(ploc, line).group(1)
+                                duration = re.search(ploc, line).group(2)
+                                botsql = bot.get_cog('BotSQL')
+                                mycursor = await botsql.get_cursor()
+                                sql = """INSERT INTO plocinfo (zone, duration) VALUES ('%s', '%s')""" % (zone, duration)
+                                mycursor.execute(sql)
+                                await botsql.botmydb()
+                                mycursor.close()
+                            if(re.search(tloc, line)):
+                                location = re.search(tloc, line).group(1)
+                                botsql = bot.get_cog('BotSQL')
+                                mycursor = await botsql.get_cursor()
+                                sql = """SELECT id, locations FROM plocinfo WHERE locations IS NOT NULL"""
+                                mycursor.execute(sql)
+                                Info = mycursor.fetchall()
+                                row_count = mycursor.rowcount
+                                if row_count == 0:
+                                    sql = """INSERT INTO plocinfo (locations) VALUES ('%s')""" % (location)
+                                    mycursor.execute(sql)
+                                    await botsql.botmydb()
+                                    print(Fore.GREEN + '**INFO:** ' + location + ' Locations Loaded' + Style.RESET_ALL)
+                                    if config.USEDEBUGCHAN == True:
+                                        buginfo = discord.Embed(title=":white_check_mark: **INFO** :white_check_mark:", description='{} Locations Loaded'.format(location), color=0x7EFF00)
+                                        await bugchan.send(embed=buginfo)
+                                else:
+                                    Info=Info[0]
+                                    if location != Info[1]:
+                                        sql = """UPDATE plocinfo SET locations = '%s' WHERE id = '%s'""" % (location, Info[0])
+                                        mycursor.execute(sql)
+                                        await botsql.botmydb()
+                                        print(Fore.GREEN + '**INFO:** Locations has been updated to: ' + location + '' + Style.RESET_ALL)
+                                        if config.USEDEBUGCHAN == True:
+                                            buginfo = discord.Embed(title=":white_check_mark: **INFO** :white_check_mark:", description='Locations has been updated to: {}'.format(location), color=0x7EFF00)
+                                            await bugchan.send(embed=buginfo)
                                 mycursor.close()
                         await asyncio.sleep(0.2)
     except IOError:

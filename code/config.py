@@ -58,3 +58,14 @@ VERSIONS_CMD = "@everyone"
 VPLUS_CMD = "@everyone"
 SETSTATUS_CMD = "Admin"
 SAVESTATS_CMD = "Admin","Mod"
+#MODS_CMD = "@everyone"
+PLOC_CMD = "@everyone"
+
+# MODSINFO - used to enable server installed mods data info gathering from logs ***Must rerun dbsetup.py if changing this to True if you ran it all ready***
+#MODSINFO = True
+
+# MODDIR - Path of the BepInEx plugins folder
+#MODDIR = "/var/lib/pterodactyl/volumes/a8fae5c1-4b08-4a96-bdd8-b673e458b3f3/BepInEx/plugins"
+
+# PLOCINFO - used for tracking placed locations to determine percent of world exploed ***Must rerun dbsetup.py if changing this to True if you ran it all ready***
+PLOCINFO = True
